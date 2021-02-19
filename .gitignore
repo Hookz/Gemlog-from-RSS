@@ -1,0 +1,8 @@
+blog/**
+__pycache__
+.idea
+*.iml
+*.gmi
+*.xml
+resources
+main.py

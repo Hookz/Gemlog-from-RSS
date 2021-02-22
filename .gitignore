@@ -6,3 +6,7 @@ __pycache__
 *.xml
 resources
 main.py
+/.eggs/
+/build/
+/dist/
+/gemlog_from_rss.egg-info/

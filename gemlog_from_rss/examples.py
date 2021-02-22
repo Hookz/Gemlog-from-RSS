@@ -1,33 +1,15 @@
 def spip_example():
     import xml.etree.ElementTree as ET
-    from lxml.html import fromstring
-    from lxml.etree import ParserError
-    import argparse
-    import requests
-    import re
-    from gemlog_from_rss.spip import MainPage, SinglePost, Page
+    from pathlib import Path
+    from gemlog_from_rss.spip import MainPage, Page
+    import shutil
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--path",
-        default="",
-        type=str,
-        help="Local path on machine to output the *.gmi files to"
-    )
-    parser.add_argument(
-        "--feed",
-        default="",
-        type=str,
-        help="Feed to download the articles from"
-    )
-
-    args = parser.parse_args()
+    Path("resources").mkdir(parents=False, exist_ok=True)
 
     main_page = MainPage(feed="http://lefaso.net/spip.php?page=backend")
 
-    if main_page.feed is None:
-        req = requests.get(str(args.feed))
-        open('resources/all_posts.xml', 'wb').write(req.content)
+    Path(main_page.root_dir).mkdir(parents=False, exist_ok=True)
+
     tree = ET.parse("resources/all_posts.xml")
     root = tree.getroot()
     main_page.root = root
@@ -43,6 +25,12 @@ def spip_example():
     main_page.create_files()
     with open(f"{main_page.root_dir}/index.gmi", "w") as f:
         f.write(main_page.make_main_page())
+
+    # Remove temporary resources directory
+    try:
+        shutil.rmtree('resources')
+    except OSError as e:
+        print("Error: %s : %s" % ('resources', e.strerror))
 
 
 def xml_example():

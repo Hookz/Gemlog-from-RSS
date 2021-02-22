@@ -13,13 +13,15 @@ using the [example.py](example.py) class. It also allows for a quick preview of 
 
 To run this code the following structure is required:
 ```python
-from gemlog_from_rss.spip import MainPage, SinglePost, Page
+from gemlog_from_rss.spip import MainPage, Page
 import xml.etree.ElementTree as ET
-from lxml.html import fromstring
-from lxml.etree import ParserError
-import re
+import shutil
 
+from pathlib import Path
+Path("resources").mkdir(parents=False, exist_ok=True)
 main_page = MainPage(feed="https://url.to.feed")
+Path(main_page.root).mkdir(parents=True, exist_ok=True)
+
 tree = ET.parse("resources/all_posts.xml")
 root = tree.getroot()
 main_page.root = root
@@ -43,6 +45,12 @@ main_page.add_posts()
 main_page.create_files()
 with open(f"{main_page.root_dir}/index.gmi", "w") as f:
     f.write(main_page.make_main_page())
+
+    # Remove temporary resources directory
+try:
+    shutil.rmtree('resources')
+except OSError as e:
+    print("Error: %s : %s" % ('resources', e.strerror))
 ```
 
 ### Running the server
